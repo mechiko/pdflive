@@ -68,24 +68,24 @@ func (p *pdfProc) DocumentGenerate() (err error) {
 func (p *pdfProc) BuildPages(datamatrix, bar bool) error {
 	if datamatrix {
 		code := fmt.Sprintf("\xe8%s", `0105000213100066215aDos=X93a2MS`)
-		if err := p.addPageByTemplate(p.templateDatamatrix, code); err != nil {
+		if err := p.addPageByTemplate(p.templateDatamatrix, code, "aDos=X"); err != nil {
 			return fmt.Errorf("%w", err)
 		}
 	}
 	if bar {
 		code := `00000123456701660249`
-		if err := p.addPageByTemplate(p.templateBar, code); err != nil {
+		if err := p.addPageByTemplate(p.templateBar, code, ""); err != nil {
 			return fmt.Errorf("%w", err)
 		}
 	}
 	return nil
 }
 
-func (p *pdfProc) addPageByTemplate(tmpl *MarkTemplate, kod string) error {
+func (p *pdfProc) addPageByTemplate(tmpl *MarkTemplate, kod string, ser string) error {
 	if tmpl == nil {
 		return fmt.Errorf("add page template is nil")
 	}
-	page, err := p.Page(tmpl, kod)
+	page, err := p.Page(tmpl, kod, ser)
 	if err != nil {
 		return fmt.Errorf("page error %w", err)
 	}

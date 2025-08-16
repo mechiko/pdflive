@@ -211,37 +211,57 @@
     ],
     "18": [
       {
-        "row_height": 20,
+        "row_height": 8,
         "col_width": 5,
-        "top": 0.1,
-        "percent": 80,
+        "percent": 100,
         "proportion": {
           "Width": 0,
           "Height": 0
         },
+        "center": true,
         "image": "barpict",
-        "image_ext": "jpg"
+        "image_ext": "jpg",
+        "image_debug": false
       },
       {
-        "row_height": 20,
+        "row_height": 8,
         "col_width": 1,
-        "top": 0.1,
         "proportion": {
           "Width": 0,
           "Height": 0
         }
       },
       {
-        "row_height": 20,
+        "row_height": 8,
         "col_width": 6,
         "bar": "insert",
         "percent": 100,
         "center": false,
-        "top": 7,
+        "image_debug": false,
         "proportion": {
           "Width": 4,
           "Height": 3
         }
+      }
+    ],
+    "19": [
+      {
+        "row_height": 1,
+        "col_width": 5,
+        "image_debug": true
+      },
+      {
+        "row_height": 1,
+        "col_width": 1
+      },
+      {
+        "value": "@kod",
+        "font_size": 5,
+        "style": "B",
+        "align": "C",
+        "row_height": 8,
+        "col_width": 6,
+        "image_debug": true
       }
     ]
   }

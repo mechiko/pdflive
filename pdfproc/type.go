@@ -13,6 +13,7 @@ type pdfProc struct {
 	templateDatamatrix *MarkTemplate
 	templateBar        *MarkTemplate
 	document           core.Document
+	debug              bool
 }
 
 func New(tmplDatamatrix, tmplBar *MarkTemplate, assets *assets.Assets) (*pdfProc, error) {

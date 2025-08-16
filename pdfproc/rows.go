@@ -37,9 +37,10 @@ type RowPrimitive struct {
 	// Ex: 16x9, 4x3...
 	Proportion props.Proportion `json:"proportion,omitempty"`
 	// Center define that the barcode will be vertically and horizontally centralized.
-	Type     barcode.Type   `json:"type,omitempty"`
-	Image    string         `json:"image,omitempty"`
-	ImageExt extension.Type `json:"image_ext,omitempty"`
+	Type       barcode.Type   `json:"type,omitempty"`
+	Image      string         `json:"image,omitempty"`
+	ImageExt   extension.Type `json:"image_ext,omitempty"`
+	ImageDebug bool           `json:"image_debug,omitempty"`
 }
 
 func (p *RowPrimitive) PropsText() props.Text {
@@ -73,8 +74,8 @@ func (p *RowPrimitive) PropsBar() props.Barcode {
 }
 
 var colStyle = &props.Cell{
-	BackgroundColor: &props.Color{Red: 80, Green: 80, Blue: 80},
-	BorderType:      border.Full,
+	BackgroundColor: &props.Color{Red: 128, Green: 128, Blue: 128},
+	BorderType:      border.None,
 	BorderColor:     &props.Color{Red: 200, Green: 0, Blue: 0},
 	LineStyle:       linestyle.Dashed,
 	BorderThickness: 0.5,

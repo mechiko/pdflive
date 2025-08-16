@@ -180,7 +180,7 @@
     ],
     "12": [
       {
-        "row_height": 14,
+        "row_height": 12,
         "value": "СОДЕРЖАНИЕ В ПРОДУКЦИИ ВРЕДНЫХ ДЛЯ ЗДОРОВЬЯ ВЕЩЕСТВ НЕ ПРЕВЫШАЕТ ДОПУСТИМЫЕ УРОВНИ, УСТАНОВЛЕННЫЕ ТЕХНИЧЕСКИМ РЕГЛАМЕНТОМ ТАМОЖЕННОГО СОЮЗА ТР ТС 021/2011 «О БЕЗОПАСНОСТИ ПИЩЕВОЙ ПРОДУКЦИИ», ТР ТС 029/2012 «ТРЕБОВАНИЯ БЕЗОПАСНОСТИ ПИЩЕВЫХ ДОБАВОК, АРОМАТИЗАТОРОВ И ТЕХНОЛОГИЧЕСКИХ ВСПОМОГАТЕЛЬНЫХ СРЕДСТВ», ТР ТС 022/2011 «ПИЩЕВАЯ ПРОДУКЦИЯ В ЧАСТИ ЕЕ МАРКИРОВКИ».\nАЛКОГОЛЬ ПРОТИВОПОКАЗАН ДЕТЯМ И ПОДРОСТКАМ ДО 18 ЛЕТ, БЕРЕМЕННЫМ И КОРМЯЩИМ ЖЕНЩИНАМ, ЛИЦАМ С ЗАБОЛЕВАНИЯМИ ЦЕНТРАЛЬНОЙ НЕРВНОЙ СИСТЕМЫ, ПОЧЕК, ПЕЧЕНИ И ДРУГИХ ОРГАНОВ ПИЩЕВАРЕНИЯ.",
         "font_size": 4,
         "align": "J",
@@ -195,18 +195,20 @@
       {
         "row_height": 15,
         "col_width": 5,
-        "top": 0.1,
-        "percent": 80,
+        "top": 0,
+        "percent": 100,
         "proportion": {
           "Width": 0,
           "Height": 0
         },
         "image": "all",
-        "image_ext": "jpg"
+        "image_ext": "jpg",
+        "center": false,
+        "image_debug": false
       },
       {
         "row_height": 15,
-        "col_width": 5,
+        "col_width": 4,
         "top": 0.1,
         "proportion": {
           "Width": 0,
@@ -215,14 +217,35 @@
       },
       {
         "row_height": 15,
-        "col_width": 2,
+        "col_width": 3,
         "data_matrix": "insert",
+        "image_debug": false,
         "percent": 100,
         "center": true,
         "proportion": {
           "Width": 0,
           "Height": 0
         }
+      }
+    ],
+    "14": [
+      {
+        "row_height": 1,
+        "col_width": 8,
+        "image_debug": false
+      },
+      {
+        "row_height": 1,
+        "col_width": 1
+      },
+      {
+        "value": "@ser",
+        "font_size": 3,
+        "style": "B",
+        "align": "C",
+        "row_height": 8,
+        "col_width": 3,
+        "image_debug": false
       }
     ]
   }

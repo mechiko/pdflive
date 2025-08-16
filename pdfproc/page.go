@@ -3,6 +3,7 @@ package pdfproc
 import (
 	"fmt"
 	"slices"
+	"strings"
 
 	"github.com/mechiko/maroto/v2/pkg/components/code"
 	"github.com/mechiko/maroto/v2/pkg/components/col"
@@ -13,7 +14,7 @@ import (
 	"github.com/mechiko/maroto/v2/pkg/core"
 )
 
-func (p *pdfProc) Page(t *MarkTemplate, kod string) (core.Page, error) {
+func (p *pdfProc) Page(t *MarkTemplate, kod string, ser string) (core.Page, error) {
 	pg := page.New()
 	rowKeys := make([]string, 0, len(t.Rows))
 	for k := range t.Rows {
@@ -21,8 +22,8 @@ func (p *pdfProc) Page(t *MarkTemplate, kod string) (core.Page, error) {
 	}
 	slices.Sort(rowKeys)
 	for _, rowKey := range rowKeys {
-		if rowKey == "12" {
-			fmt.Println("12")
+		if rowKey == "18" {
+			fmt.Println(12)
 		}
 		rowTempl := t.Rows[rowKey]
 		fmt.Printf("обрабатываем строку [%s] %d\n", rowKey, len(rowTempl))
@@ -53,10 +54,21 @@ func (p *pdfProc) Page(t *MarkTemplate, kod string) (core.Page, error) {
 		case len(rowTempl) > 1:
 			// две строки с колонками
 			for i, rowSingle := range rowTempl {
+				rowSingle.Value = strings.ReplaceAll(rowSingle.Value, "@kod", kod)
+				rowSingle.Value = strings.ReplaceAll(rowSingle.Value, "@ser", ser)
 				if rowSingle.DataMatrix != "" {
-					cols[i] = code.NewMatrixCol(rowSingle.ColWidth, kod, rowSingle.PropsRect())
+					if rowSingle.ImageDebug {
+						cols[i] = code.NewMatrixCol(rowSingle.ColWidth, kod, rowSingle.PropsRect()).WithStyle(colStyle)
+					} else {
+						cols[i] = code.NewMatrixCol(rowSingle.ColWidth, kod, rowSingle.PropsRect())
+					}
 				} else if rowSingle.Bar != "" {
 					cols[i] = code.NewBarCol(rowSingle.ColWidth, kod, rowSingle.PropsBar())
+					if rowSingle.ImageDebug {
+						cols[i] = code.NewBarCol(rowSingle.ColWidth, kod, rowSingle.PropsBar()).WithStyle(colStyle)
+					} else {
+						cols[i] = code.NewBarCol(rowSingle.ColWidth, kod, rowSingle.PropsBar())
+					}
 				} else {
 					if rowSingle.Image != "" {
 						if p.assets != nil {
@@ -64,9 +76,15 @@ func (p *pdfProc) Page(t *MarkTemplate, kod string) (core.Page, error) {
 							if err != nil {
 								return nil, fmt.Errorf("page image assets error %w", err)
 							}
-							cols[i] = col.New(rowSingle.ColWidth).Add(
-								image.NewFromBytes(img, rowSingle.ImageExt, rowSingle.PropsRect()),
-							)
+							if rowSingle.ImageDebug {
+								cols[i] = col.New(rowSingle.ColWidth).Add(
+									image.NewFromBytes(img, rowSingle.ImageExt, rowSingle.PropsRect()),
+								).WithStyle(colStyle)
+							} else {
+								cols[i] = col.New(rowSingle.ColWidth).Add(
+									image.NewFromBytes(img, rowSingle.ImageExt, rowSingle.PropsRect()),
+								)
+							}
 						}
 					} else if rowSingle.Value == "" {
 						cols[i] = col.New(rowSingle.ColWidth)
