@@ -138,6 +138,7 @@ $RECYCLE.BIN/
 
 .vscode/
 .tmp/
+.nevakod/
 
 !*.go
 *.db

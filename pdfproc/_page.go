@@ -14,7 +14,7 @@ import (
 	"github.com/mechiko/maroto/v2/pkg/core"
 )
 
-func (p *pdfProc) Page(t *MarkTemplate, kod string, ser string, idx string) (core.Page, error) {
+func (p *pdfProc) Page(t *MarkTemplate, kod string, ser string) (core.Page, error) {
 	pg := page.New()
 	rowKeys := make([]string, 0, len(t.Rows))
 	for k := range t.Rows {
@@ -22,8 +22,12 @@ func (p *pdfProc) Page(t *MarkTemplate, kod string, ser string, idx string) (cor
 	}
 	slices.Sort(rowKeys)
 	for _, rowKey := range rowKeys {
+		if rowKey == "18" {
+			fmt.Println(12)
+		}
 		rowTempl := t.Rows[rowKey]
 		// fmt.Printf("обрабатываем строку [%s] %d\n", rowKey, len(rowTempl))
+		cols := make([]core.Col, len(rowTempl))
 		switch {
 		case len(rowTempl) == 0:
 		case len(rowTempl) == 1:
@@ -48,9 +52,10 @@ func (p *pdfProc) Page(t *MarkTemplate, kod string, ser string, idx string) (cor
 				}
 			}
 		case len(rowTempl) > 1:
-			cols := make([]core.Col, len(rowTempl))
 			// две строки с колонками
 			for i, rowSingle := range rowTempl {
+				rowSingle.Value = strings.ReplaceAll(rowSingle.Value, "@kod", kod)
+				rowSingle.Value = strings.ReplaceAll(rowSingle.Value, "@ser", ser)
 				if rowSingle.DataMatrix != "" {
 					if rowSingle.ImageDebug {
 						cols[i] = code.NewMatrixCol(rowSingle.ColWidth, kod, rowSingle.PropsRect()).WithStyle(colStyle)
@@ -58,6 +63,7 @@ func (p *pdfProc) Page(t *MarkTemplate, kod string, ser string, idx string) (cor
 						cols[i] = code.NewMatrixCol(rowSingle.ColWidth, kod, rowSingle.PropsRect())
 					}
 				} else if rowSingle.Bar != "" {
+					cols[i] = code.NewBarCol(rowSingle.ColWidth, kod, rowSingle.PropsBar())
 					if rowSingle.ImageDebug {
 						cols[i] = code.NewBarCol(rowSingle.ColWidth, kod, rowSingle.PropsBar()).WithStyle(colStyle)
 					} else {
@@ -88,23 +94,13 @@ func (p *pdfProc) Page(t *MarkTemplate, kod string, ser string, idx string) (cor
 					} else if rowSingle.Value == "" {
 						cols[i] = col.New(rowSingle.ColWidth)
 					} else {
-						value := strings.ReplaceAll(rowSingle.Value, "@ser", ser)
-						value = strings.ReplaceAll(value, "@idx", idx)
-						// if sscc
-						if len(kod) == 20 {
-							kod1 := fmt.Sprintf("(%s)%s", kod[:2], kod[2:])
-							value = strings.ReplaceAll(value, "@kod", kod1)
-						} else {
-							value = strings.ReplaceAll(value, "@kod", kod)
-						}
-						cols[i] = text.NewCol(rowSingle.ColWidth, value, rowSingle.PropsText())
+						cols[i] = text.NewCol(rowSingle.ColWidth, rowSingle.Value, rowSingle.PropsText())
 					}
 				}
 			}
 			pg.Add(
 				row.New(rowTempl[0].RowHeight).Add(cols...),
 			)
-		default:
 		}
 	}
 	return pg, nil

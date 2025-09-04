@@ -3,6 +3,7 @@ package pdfproc
 import (
 	"fmt"
 	"live/embeded"
+	"time"
 
 	"github.com/mechiko/maroto/v2"
 
@@ -14,14 +15,18 @@ import (
 )
 
 func (p *pdfProc) PdfDocument() (err error) {
+	start := time.Now()
 	err = p.BuildPages(true, true)
 	if err != nil {
 		return fmt.Errorf("%w", err)
 	}
+	fmt.Printf("buid pages %v\n", time.Since(start))
+	start = time.Now()
 	err = p.DocumentGenerate()
 	if err != nil {
 		return fmt.Errorf("%w", err)
 	}
+	fmt.Printf("generate document %v\n", time.Since(start))
 	fileName := "PDF.pdf"
 	err = p.document.Save(fileName)
 	if err != nil {
@@ -68,24 +73,25 @@ func (p *pdfProc) DocumentGenerate() (err error) {
 func (p *pdfProc) BuildPages(datamatrix, bar bool) error {
 	if datamatrix {
 		code := fmt.Sprintf("\xe8%s", `0105000213100066215aDos=X93a2MS`)
-		if err := p.addPageByTemplate(p.templateDatamatrix, code, "aDos=X"); err != nil {
+		idx := fmt.Sprintf("%06d", 123)
+		if err := p.addPageByTemplate(p.templateDatamatrix, code, "aDos=X", idx); err != nil {
 			return fmt.Errorf("%w", err)
 		}
 	}
 	if bar {
 		code := `00000123456701660249`
-		if err := p.addPageByTemplate(p.templateBar, code, ""); err != nil {
+		if err := p.addPageByTemplate(p.templateBar, code, "", ""); err != nil {
 			return fmt.Errorf("%w", err)
 		}
 	}
 	return nil
 }
 
-func (p *pdfProc) addPageByTemplate(tmpl *MarkTemplate, kod string, ser string) error {
+func (p *pdfProc) addPageByTemplate(tmpl *MarkTemplate, kod string, ser string, idx string) error {
 	if tmpl == nil {
 		return fmt.Errorf("add page template is nil")
 	}
-	page, err := p.Page(tmpl, kod, ser)
+	page, err := p.Page(tmpl, kod, ser, idx)
 	if err != nil {
 		return fmt.Errorf("page error %w", err)
 	}

@@ -5,9 +5,9 @@
   "Rows": {
     "01": [
       {
-        "value": "«HARP LAGER»",
+        "value": "«TEST TEST»",
         "style": "B",
-        "font_size": 5,
+        "font_size": 8,
         "align": "C",
         "proportion": {
           "Width": 0,
@@ -231,12 +231,16 @@
     "14": [
       {
         "row_height": 1,
-        "col_width": 8,
+        "col_width": 4,
         "image_debug": false
       },
       {
         "row_height": 1,
-        "col_width": 1
+        "col_width": 5,
+        "value": "@idx",
+        "font_size": 3,
+        "style": "B",
+        "align": "C"
       },
       {
         "value": "@ser",
