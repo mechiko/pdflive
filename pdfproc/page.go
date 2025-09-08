@@ -23,7 +23,6 @@ func (p *pdfProc) Page(t *MarkTemplate, kod string, ser string, idx string) (cor
 	slices.Sort(rowKeys)
 	for _, rowKey := range rowKeys {
 		rowTempl := t.Rows[rowKey]
-		// fmt.Printf("обрабатываем строку [%s] %d\n", rowKey, len(rowTempl))
 		switch {
 		case len(rowTempl) == 0:
 		case len(rowTempl) == 1:
@@ -49,55 +48,70 @@ func (p *pdfProc) Page(t *MarkTemplate, kod string, ser string, idx string) (cor
 			}
 		case len(rowTempl) > 1:
 			cols := make([]core.Col, len(rowTempl))
-			// две строки с колонками
+			// строки с колонками
 			for i, rowSingle := range rowTempl {
+				cols[i] = col.New(rowSingle.ColWidth)
 				if rowSingle.DataMatrix != "" {
+					cols[i].Add(
+						code.NewMatrix(kod, rowSingle.PropsRect()),
+					)
 					if rowSingle.ImageDebug {
-						cols[i] = code.NewMatrixCol(rowSingle.ColWidth, kod, rowSingle.PropsRect()).WithStyle(colStyle)
-					} else {
-						cols[i] = code.NewMatrixCol(rowSingle.ColWidth, kod, rowSingle.PropsRect())
+						cols[i].WithStyle(colStyle)
 					}
-				} else if rowSingle.Bar != "" {
+				}
+				if rowSingle.Bar != "" {
+					cols[i].Add(
+						code.NewBar(kod, rowSingle.PropsBar()),
+					)
 					if rowSingle.ImageDebug {
-						cols[i] = code.NewBarCol(rowSingle.ColWidth, kod, rowSingle.PropsBar()).WithStyle(colStyle)
-					} else {
-						cols[i] = code.NewBarCol(rowSingle.ColWidth, kod, rowSingle.PropsBar())
+						cols[i].WithStyle(colStyle)
 					}
+				}
+				if rowSingle.Image != "" {
+					if p.assets != nil {
+						img, err := p.assets.Jpg(rowSingle.Image)
+						if err != nil {
+							return nil, fmt.Errorf("page image assets error %w", err)
+						}
+						if len(img) == 0 {
+							return nil, fmt.Errorf("page image assets empty for %q", rowSingle.Image)
+						}
+						cols[i].Add(
+							image.NewFromBytes(img, rowSingle.ImageExt, rowSingle.PropsRect()),
+						)
+						if rowSingle.ImageDebug {
+							cols[i].WithStyle(colStyle)
+						}
+					} else {
+						return nil, fmt.Errorf("page image assets not available (assets is nil) for %q", rowSingle.Image)
+					}
+				}
+				if rowSingle.Value != "" {
+					value := strings.ReplaceAll(rowSingle.Value, "@ser", ser)
+					value = strings.ReplaceAll(value, "@idx", idx)
+					if len(kod) == 20 {
+						kod1 := fmt.Sprintf("(%s)%s", kod[:2], kod[2:])
+						value = strings.ReplaceAll(value, "@kod", kod1)
+					} else {
+						value = strings.ReplaceAll(value, "@kod", kod)
+					}
+					cols[i].Add(text.New(value, rowSingle.PropsText()))
 				} else {
-					if rowSingle.Image != "" {
-						if p.assets != nil {
-							img, err := p.assets.Jpg(rowSingle.Image)
-							if err != nil {
-								return nil, fmt.Errorf("page image assets error %w", err)
-							}
-							if len(img) == 0 {
-								return nil, fmt.Errorf("page image assets empty for %q", rowSingle.Image)
-							}
-							if rowSingle.ImageDebug {
-								cols[i] = col.New(rowSingle.ColWidth).Add(
-									image.NewFromBytes(img, rowSingle.ImageExt, rowSingle.PropsRect()),
-								).WithStyle(colStyle)
+					if len(rowSingle.Values) > 0 {
+						comps := make([]core.Component, 0)
+						for _, val := range rowSingle.Values {
+							value := strings.ReplaceAll(val.Value, "@ser", ser)
+							value = strings.ReplaceAll(value, "@idx", idx)
+							if len(kod) == 20 {
+								kod1 := fmt.Sprintf("(%s)%s", kod[:2], kod[2:])
+								value = strings.ReplaceAll(value, "@kod", kod1)
 							} else {
-								cols[i] = col.New(rowSingle.ColWidth).Add(
-									image.NewFromBytes(img, rowSingle.ImageExt, rowSingle.PropsRect()),
-								)
+								value = strings.ReplaceAll(value, "@kod", kod)
 							}
-						} else {
-							return nil, fmt.Errorf("page image assets not available (assets is nil) for %q", rowSingle.Image)
+							comps = append(comps, text.New(value, val.PropsText()))
 						}
-					} else if rowSingle.Value == "" {
-						cols[i] = col.New(rowSingle.ColWidth)
-					} else {
-						value := strings.ReplaceAll(rowSingle.Value, "@ser", ser)
-						value = strings.ReplaceAll(value, "@idx", idx)
-						// if sscc
-						if len(kod) == 20 {
-							kod1 := fmt.Sprintf("(%s)%s", kod[:2], kod[2:])
-							value = strings.ReplaceAll(value, "@kod", kod1)
-						} else {
-							value = strings.ReplaceAll(value, "@kod", kod)
-						}
-						cols[i] = text.NewCol(rowSingle.ColWidth, value, rowSingle.PropsText())
+						cols[i].Add(comps...)
+						// cols[i] = text.NewCol(rowSingle.ColWidth, value, rowSingle.PropsText())
 					}
 				}
 			}
