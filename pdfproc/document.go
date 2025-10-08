@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/mechiko/maroto/v2"
+	"github.com/mechiko/utility"
 
 	"github.com/mechiko/maroto/v2/pkg/config"
 	"github.com/mechiko/maroto/v2/pkg/consts/fontstyle"
@@ -36,7 +37,7 @@ func (p *pdfProc) PdfDocument() (err error) {
 }
 
 func (p *pdfProc) buildMaroto() (err error) {
-	customFont := "arial-unicode-ms"
+	customFont := "roboto"
 	customFonts, err := repository.New().
 		AddUTF8FontFromBytes(customFont, fontstyle.Normal, embeded.Regular).
 		AddUTF8FontFromBytes(customFont, fontstyle.Italic, embeded.Italic).
@@ -72,26 +73,28 @@ func (p *pdfProc) DocumentGenerate() (err error) {
 
 func (p *pdfProc) BuildPages(datamatrix, bar bool) error {
 	if datamatrix {
-		code := fmt.Sprintf("\xe8%s", `0105000213100066215aDos=X93a2MS`)
+		code := `0105000213100066215aDos=X93a2MS`
+		codeCis, _ := utility.ParseCisInfo(code)
 		idx := fmt.Sprintf("%06d", 123)
-		if err := p.addPageByTemplate(p.templateDatamatrix, code, "aDos=X", idx); err != nil {
+		if err := p.addPageByTemplate(p.templateDatamatrix, codeCis, "Б1", idx); err != nil {
 			return fmt.Errorf("%w", err)
 		}
 	}
 	if bar {
-		code := `00000123456701660249`
-		if err := p.addPageByTemplate(p.templateBar, code, "", ""); err != nil {
+		code := `0105000213100066215aDos=X93a2MS`
+		codeCis, _ := utility.ParseCisInfo(code)
+		if err := p.addPageByTemplate(p.templateBar, codeCis, "Б1", "000001"); err != nil {
 			return fmt.Errorf("%w", err)
 		}
 	}
 	return nil
 }
 
-func (p *pdfProc) addPageByTemplate(tmpl *MarkTemplate, kod string, ser string, idx string) error {
+func (p *pdfProc) addPageByTemplate(tmpl *MarkTemplate, cis *utility.CisInfo, party string, idx string) error {
 	if tmpl == nil {
 		return fmt.Errorf("add page template is nil")
 	}
-	page, err := p.Page(tmpl, kod, ser, idx)
+	page, err := p.Page(tmpl, cis, party, idx)
 	if err != nil {
 		return fmt.Errorf("page error %w", err)
 	}

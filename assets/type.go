@@ -14,6 +14,7 @@ type Assets struct {
 	mutex sync.Mutex
 	path  string
 	jpg   map[string][]byte
+	png   map[string][]byte
 	json  map[string][]byte
 }
 
@@ -25,6 +26,7 @@ func New(path string) (*Assets, error) {
 		path: path,
 		jpg:  make(map[string][]byte),
 		json: make(map[string][]byte),
+		png:  make(map[string][]byte),
 	}
 	err := a.load()
 	if err != nil {
@@ -41,6 +43,22 @@ func (a *Assets) Jpg(name string) (b []byte, err error) {
 	}
 	name = strings.ToLower(name)
 	byteJpg, ok := a.jpg[name]
+	if !ok {
+		return nil, fmt.Errorf("assets jpg %s not found", name)
+	}
+	b = make([]byte, len(byteJpg))
+	copy(b, byteJpg)
+	return
+}
+
+func (a *Assets) Png(name string) (b []byte, err error) {
+	a.mutex.Lock()
+	defer a.mutex.Unlock()
+	if name == "" {
+		return nil, fmt.Errorf("assets jpg name %s is empty", name)
+	}
+	name = strings.ToLower(name)
+	byteJpg, ok := a.png[name]
 	if !ok {
 		return nil, fmt.Errorf("assets jpg %s not found", name)
 	}
@@ -86,6 +104,13 @@ func (a *Assets) load() (err error) {
 				}
 				// Convert the byte slice to a string
 				a.jpg[base] = contentBytes
+			case "png":
+				contentBytes, err := os.ReadFile(filepath.Join(a.path, file.Name()))
+				if err != nil {
+					return fmt.Errorf("Error reading file: %v", err)
+				}
+				// Convert the byte slice to a string
+				a.png[base] = contentBytes
 			case "json":
 				contentBytes, err := os.ReadFile(filepath.Join(a.path, file.Name()))
 				if err != nil {

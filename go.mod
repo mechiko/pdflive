@@ -3,6 +3,8 @@ module live
 go 1.24.6
 
 require (
+	github.com/juliankoehn/barcode v0.0.0-20200418173355-72e133c1f72f
+	github.com/mechiko/barcode v1.0.0
 	github.com/mechiko/maroto/v2 v2.2.3
 	github.com/mechiko/utility v0.0.0-20250813091156-5a90ea8f274a
 )
@@ -16,7 +18,6 @@ require (
 	github.com/johnfercher/go-tree v1.1.0 // indirect
 	github.com/jung-kurt/gofpdf v1.16.2 // indirect
 	github.com/mattn/go-runewidth v0.0.16 // indirect
-	github.com/mechiko/barcode v1.0.0 // indirect
 	github.com/pdfcpu/pdfcpu v0.9.1 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect

@@ -23,19 +23,19 @@ func main() {
 	tmplDatamatrix := &pdfproc.MarkTemplate{}
 	err = json.Unmarshal(tmplDatamatrixJson, tmplDatamatrix)
 	if err != nil {
-		log.Fatalf("Error unmarshal file: %v", err)
+		log.Fatalf("Error unmarshal datamatrix file: %v", err)
 	}
 	tmplBar := &pdfproc.MarkTemplate{}
 	err = json.Unmarshal(tmplBarJson, tmplBar)
 	if err != nil {
-		log.Fatalf("Error unmarshal file: %v", err)
+		log.Fatalf("Error unmarshal bar file: %v", err)
 	}
 	pdf, err := pdfproc.New(tmplDatamatrix, tmplBar, asts)
 	if err != nil {
-		log.Fatalf("Error unmarshal file: %v", err)
+		log.Fatalf("Error pdf new: %v", err)
 	}
 	err = pdf.PdfDocument()
 	if err != nil {
-		log.Fatalf("Error unmarshal file: %v", err)
+		log.Fatalf("Error pdf document: %v", err)
 	}
 }
